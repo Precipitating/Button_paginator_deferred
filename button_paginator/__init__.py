@@ -257,24 +257,35 @@ class Paginator(discord.ui.View):
                 await self.message.edit(content=dct.get("content", None), embed=dct.get("embed", None),
                                         attachments=dct.get('file', None), view=self)
 
-    async def start(self):
+    async def start(self, deferred= False):
         try:
             current = self.embeds[self.page]
             if isinstance(current, str):
                 if isinstance(self.destination, discord.Interaction):
-                    await self.destination.response.send_message(content=current, view=self)
+                    if deffered:
+                        await self.destination.followup.send(content=current, view=self)
+                    else:
+                        await self.destination.response.send_message(content=current, view=self)
+
                     self.message = await self.destination.original_response()
                 else:
                     self.message = await self.destination.send(content=current, view=self)
             elif isinstance(current, discord.Embed):
                 if isinstance(self.destination, discord.Interaction):
-                    await self.destination.response.send_message(embed=current, view=self)
+                    if deferred:
+                        await self.destination.followup.send(embed=current, view=self)
+                    else:
+                        await self.destination.response.send_message(embed=current, view=self)
+
                     self.message = await self.destination.original_response()
                 else:
                     self.message = await self.destination.send(embed=current, view=self)
             elif isinstance(current, discord.File):
                 if isinstance(self.destination, discord.Interaction):
-                    await self.destination.response.send_message(file=current, view=self)
+                    if deferred:
+                        await self.destination.followup.send(file=current, view=self)
+                    else:
+                        await self.destination.response.send_message(file=current, view=self)
                     self.message = await self.destination.original_response()
                 else:
                     self.message = await self.destination.send(file=current, view=self)
@@ -289,10 +300,18 @@ class Paginator(discord.ui.View):
                         dct["file"] = item
 
                 if isinstance(self.destination, discord.Interaction):
-                    await self.destination.response.send_message(content=dct.get("content", None),
-                                                                 embed=dct.get("embed", None),
-                                                                 file=dct.get("file", None),
-                                                                 view=self)
+                    if deferred:
+                        await self.destination.followup.send(content=dct.get("content", None),
+                                                                     embed=dct.get("embed", None),
+                                                                     file=dct.get("file", None),
+                                                                     view=self)
+                    else:
+                        await self.destination.response.send_message(content=dct.get("content", None),
+                                                                     embed=dct.get("embed", None),
+                                                                     file=dct.get("file", None),
+                                                                     view=self)
+
+
                     self.message = await self.destination.original_response()
                 else:
                     self.message = await self.destination.send(content=dct.get("content", None),
