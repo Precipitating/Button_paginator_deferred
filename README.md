@@ -1,5 +1,5 @@
 # A python library created to make button pagination easy
-# Edited to work if the discord command is deffered.
+# Edited to work if the discord command is deffered by setting the param deferred=True on start method
 
 ---
 
